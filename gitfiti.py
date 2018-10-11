@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import itertools
 import json
 import math
+import os
 try:
     # Python 3+
     from urllib.error import HTTPError, URLError
@@ -123,6 +124,25 @@ HIREME = [
   [1,0,1,0,1,0,1,0,0,0,1,1,1,0,0,1,0,1,0,1,0,1,1,1],
 ]
 
+BEER = [
+  [0,0,0,0,0,0,0,3,3,3,0,0,3,3,3,0,3,3,3,0,3,3,3,0,0],
+  [0,0,1,1,1,1,0,3,0,0,3,0,3,0,0,0,3,0,0,0,3,0,0,3,0],
+  [0,2,2,2,2,2,0,3,0,0,3,0,3,0,0,0,3,0,0,0,3,0,0,3,0],
+  [2,0,2,2,2,2,0,3,3,3,0,0,3,3,3,0,3,3,3,0,3,3,3,0,0],
+  [2,0,2,2,2,2,0,3,0,0,3,0,3,0,0,0,3,0,0,0,3,0,3,0,0],
+  [0,2,2,2,2,2,0,3,0,0,3,0,3,0,0,0,3,0,0,0,3,0,0,3,0],
+  [0,0,2,2,2,2,0,3,3,3,0,0,3,3,3,0,3,3,3,0,3,0,0,3,0],
+]
+
+GLIDERS = [
+  [0,0,0,4,0,4,0,0,0,0,4,0,0,0],
+  [0,4,0,4,0,0,4,4,0,0,0,4,0,0],
+  [0,0,4,4,0,4,4,0,0,4,4,4,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,4,0,4,0,0,0,4,0,0,0,0,0,0],
+  [0,0,4,4,0,4,0,4,0,0,0,0,0,0],
+  [0,0,4,0,0,0,4,4,0,0,0,0,0,0],
+]
 
 ASCII_TO_NUMBER = {
   '_': 0,
@@ -173,6 +193,8 @@ IMAGES = {
   'hello': HELLO,
   'hireme': HIREME,
   'oneup_str': ONEUP_STR,
+  'beer': BEER,
+  'gliders': GLIDERS,
 }
 
 
@@ -291,7 +313,7 @@ def commit(commitdate):
 
 def fake_it(image, start_date, username, repo, git_url, offset=0, multiplier=1):
     template = (
-        '#!/bin/bash\n'
+        '#!/usr/bin/env bash\n'
         'REPO={0}\n'
         'git init $REPO\n'
         'cd $REPO\n'
@@ -318,6 +340,7 @@ def save(output, filename):
     """Saves the list to a given filename"""
     with open(filename, 'w') as f:
         f.write(output)
+    os.chmod(filename, 0o755) # add execute permissions
 
 
 def request_user_input(prompt='> '):
@@ -396,7 +419,7 @@ def main():
 
     save(output, 'gitfiti.sh')
     print('gitfiti.sh saved.')
-    print('Create a new(!) repo at {0}new and run the script'.format(git_base))
+    print('Create a new(!) repo named {0} at {1} and run the script'.format(repo, git_base))
 
 
 if __name__ == '__main__':
